@@ -1,0 +1,87 @@
+#board {
+  display: flex;
+  justify-content: space-around;
+  flex-direction: row;
+  background-color: blue;
+  border: 3px solid black;
+}
+
+h1 {
+  font-family: 'Open Sans Condensed', sans-serif;
+}
+
+#nextPlayer {
+  position: absolute;
+}
+
+.column {
+  display: flex;
+  justify-content: space-around;
+  flex-direction: column-reverse;
+}
+
+.square {
+  border-radius: 100%;
+  border: 3px solid black;
+  width: 50px;
+  height: 50px;
+  margin: 10px;
+}
+
+.Red {
+  background-color: red;
+  animation: wobble 1s 1;
+}
+
+.Yellow {
+  background-color: yellow;
+  animation: wobble 1s 1;
+}
+
+.win {
+  animation: winner 3s infinite;
+  border-width: 3px;
+  border-style: solid;
+  border-color: pink;
+}
+
+@keyframes winner {
+  0% {
+    border-color: pink;
+    transform: translateX(-1px);
+  }
+  25% {
+    border-color: orange;
+    transform: translateX(2px);
+  }
+  50% {
+    border-color: white;
+    transform: translateX(-4px);
+  }
+  75% {
+    border-color: orange;
+    transform: translateX(2px);
+  }
+  100% {
+    border-color: pink;
+    transform: translateX(-1px);
+  }
+}
+
+@keyframes wobble {
+  10%, 90% {
+    transform: translateX(-1px);
+  }
+
+  20%, 80% {
+    transform: translateX(2px);
+  }
+
+  30%, 50%, 70% {
+    transform: translateX(-4px);
+  }
+
+  40%, 60% {
+    transform: translateX(4px);
+  }
+}
