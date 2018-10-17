@@ -14,14 +14,18 @@ window.addEventListener('DOMContentLoaded', () => {
 
   let currentPlayer = player1;
   let lastPlayer = player2;
+  let winnerMove;
 
   const playerDisplay = document.querySelector('h1');
   const nextPlayer = document.querySelector('#nextPlayer');
 
   nextPlayer.classList.add(currentPlayer.color);
 
-  let winnerMove;
+  document.addEventListener('mousemove', function(event) {
+    nextPlayer.style.left = `${event.clientX}px`;
+  });
 
+  const buttons = document.querySelectorAll('button');
   function row(id) {
     const object = {};
     for(let i = 1 ; i < 9; i++) {
@@ -30,13 +34,6 @@ window.addEventListener('DOMContentLoaded', () => {
     }
     return object;
   }
-
-  document.addEventListener('mousemove', function(event) {
-    nextPlayer.style.left = `${event.clientX}px`;
-  });
-
-
-
 
   const board = {
     h: {rows: row('h'), number: 1 },
@@ -59,9 +56,6 @@ window.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-
-  const buttons = document.querySelectorAll('button');
-
   function handleClick(event) {
     const number = board[event.target.id[1]].number;
     const location = event.target.id[1] + number;
@@ -69,13 +63,13 @@ window.addEventListener('DOMContentLoaded', () => {
     board[event.target.id[1]].number ++;
     currentPlayer.moves.push(location);
 
-
     const target = document.querySelector(`#${location}`);
     target.classList.add(currentPlayer.color);
 
     const win = checkForWin();
 
     // showBoardInConsole();
+
     if(!win) {
       if(currentPlayer.id === 1) {
         currentPlayer = player2;
@@ -102,20 +96,17 @@ window.addEventListener('DOMContentLoaded', () => {
     button.addEventListener('click', handleClick);
   });
 
-
-  function showBoardInConsole() {
-
-    let display = '';
-
-    for(let i = 1; i < 9; i++) {
-      Object.keys(board).forEach(row => {
-        display += board[row].rows[row + i];
-      });
-      display += '\n';
-    }
-    display = display.split('').reverse().join('-');
-    console.log(display);
-  }
+  // function showBoardInConsole() {
+  //   let display = '';
+  //   for(let i = 1; i < 9; i++) {
+  //     Object.keys(board).forEach(row => {
+  //       display += board[row].rows[row + i];
+  //     });
+  //     display += '\n';
+  //   }
+  //   display = display.split('').reverse().join('-');
+  //   console.log(display);
+  // }
 
   function checkForWin() {
     if(currentPlayer.moves.length >= 4) {
@@ -175,11 +166,12 @@ window.addEventListener('DOMContentLoaded', () => {
     let nextLetter;
     let nextNumber;
     let letters;
-
-    if(!direction === 'db') {
+    if(direction !== 'db') {
       letters = Object.keys(board).sort((a, b) => a > b);
+      console.log('forwards', direction, letters);
     } else {
       letters = Object.keys(board).sort((a, b) => a < b);
+      console.log('backwards', direction, letters);
     }
 
     if(direction === 'h' || direction === 'df') {
