@@ -18,6 +18,8 @@ window.addEventListener('DOMContentLoaded', () => {
 
   const playerDisplay = document.querySelector('h1');
   const nextPlayer = document.querySelector('#nextPlayer');
+  const columns = document.querySelectorAll('.column');
+  const audio = document.querySelector('audio');
 
   nextPlayer.classList.add(currentPlayer.color);
 
@@ -25,7 +27,6 @@ window.addEventListener('DOMContentLoaded', () => {
     nextPlayer.style.left = `${event.clientX}px`;
   });
 
-  const buttons = document.querySelectorAll('button');
   function row(id) {
     const object = {};
     for(let i = 1 ; i < 9; i++) {
@@ -56,15 +57,18 @@ window.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  columns.forEach(column => {
+    column.addEventListener('click', handleClick);
+  });
+
   function handleClick(event) {
-    const number = board[event.target.id[1]].number;
-    const location = event.target.id[1] + number;
-    board[event.target.id[1]].rows[location] = currentPlayer.id;
-    board[event.target.id[1]].number ++;
+    const number = board[event.target.id[0]].number;
+    const location = event.target.id[0] + number;
+    board[event.target.id[0]].rows[location] = currentPlayer.id;
+    board[event.target.id[0]].number ++;
     currentPlayer.moves.push(location);
 
-    const target = document.querySelector(`#${location}`);
-    target.classList.add(currentPlayer.color);
+    animateMove(location);
 
     const win = checkForWin();
 
@@ -82,19 +86,41 @@ window.addEventListener('DOMContentLoaded', () => {
       nextPlayer.classList.remove(lastPlayer.color);
       nextPlayer.classList.add(currentPlayer.color);
     } else if(win) {
-      winnerMove.forEach(move => {
-        const div = document.querySelector(`#${move}`);
-        div.classList.add('win');
-        buttons.forEach(button => {
-          button.removeEventListener('click', handleClick);
+      setTimeout(() => {
+        audio.src = 'win.mp3';
+        audio.play();
+        winnerMove.forEach(move => {
+          const div = document.querySelector(`#${move}`);
+          div.classList.add('win');
+          columns.forEach(column => {
+            column.removeEventListener('click', handleClick);
+          });
         });
-      });
+      }, 3000);
     }
   }
 
-  buttons.forEach(button => {
-    button.addEventListener('click', handleClick);
-  });
+  function animateMove(location) {
+    const finalLocationNumber = parseInt(location[1]);
+    const column = location[0];
+    const color = currentPlayer.color;
+    let j = 8;
+    for(let i = finalLocationNumber; i <= 9; i++) {
+      let previousLocation;
+      const tempLocation = document.querySelector(`#${column + 8}`);
+      tempLocation.classList.add(color);
+      setTimeout(() => {
+        if(j !== 8) {
+          previousLocation = document.querySelector(`#${column + (i + 1)}`);
+          previousLocation.classList.remove(color);
+        }
+        audio.play();
+        const tempLocation = document.querySelector(`#${column + i}`);
+        tempLocation.classList.add(color);
+      }, j * 250);
+      j --;
+    }
+  }
 
   // function showBoardInConsole() {
   //   let display = '';
@@ -132,8 +158,6 @@ window.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-
-
   function checkForWinAll(direction) {
     const allMoves = currentPlayer.moves;
     let win = false;
@@ -159,6 +183,7 @@ window.addEventListener('DOMContentLoaded', () => {
         winnerMoveTemp = [];
       }
     });
+
     return win;
   }
 
@@ -168,10 +193,8 @@ window.addEventListener('DOMContentLoaded', () => {
     let letters;
     if(direction !== 'db') {
       letters = Object.keys(board).sort((a, b) => a > b);
-      console.log('forwards', direction, letters);
     } else {
       letters = Object.keys(board).sort((a, b) => a < b);
-      console.log('backwards', direction, letters);
     }
 
     if(direction === 'h' || direction === 'df') {
