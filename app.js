@@ -24,7 +24,7 @@ window.addEventListener('DOMContentLoaded', () => {
   nextPlayer.classList.add(currentPlayer.color);
 
   document.addEventListener('mousemove', function(event) {
-    nextPlayer.style.left = `${event.clientX}px`;
+    nextPlayer.style.left = `${event.clientX - 30}px`;
   });
 
   function row(id) {
@@ -63,6 +63,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
   function handleClick(event) {
     const number = board[event.target.id[0]].number;
+    if(number > 8) return;
     const location = event.target.id[0] + number;
     board[event.target.id[0]].rows[location] = currentPlayer.id;
     board[event.target.id[0]].number ++;
@@ -82,7 +83,7 @@ window.addEventListener('DOMContentLoaded', () => {
         currentPlayer = player1;
         lastPlayer = player2;
       }
-      playerDisplay.innerHTML = `it's ${currentPlayer.color}'s turn`;
+      playerDisplay.innerHTML = `${currentPlayer.color}'s turn`;
       nextPlayer.classList.remove(lastPlayer.color);
       nextPlayer.classList.add(currentPlayer.color);
     } else if(win) {
@@ -154,6 +155,7 @@ window.addEventListener('DOMContentLoaded', () => {
         playerDisplay.innerHTML = `${currentPlayer.name} has won diagonally!!!!`;
         win = true;
       }
+
       return win;
     }
   }
